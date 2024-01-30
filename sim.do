@@ -11,8 +11,10 @@ vlog -work work -sv ./buff_break_join/uart/uart.sv
 vlog -work work -sv ./buff_break_join/cycle_uart_in.sv
 vlog -work work -sv ./buff_break_join/cycle_uart_out.sv
 vlog -work work -sv ./uart_comm.sv 
+vlog -work work -sv ./top_test.sv
 
-vlog -work work -sv ./uart_comm_tb.sv 
+vlog -work work -sv ./top_test_tb.sv
+
 
 
 
@@ -20,4 +22,4 @@ vsim -voptargs=+acc work.tb
 
 do wave.do
 
-run 50 ms
+run 100 ms

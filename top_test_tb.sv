@@ -91,19 +91,11 @@ always@(posedge clock or reset) begin
             write = 1'b0;
         end
 end
-    uart_comm#(32, 8, 64, 200_000_000, 115200) uart_comm(
-        .clock(clock),
-        .reset(reset),
-        .r_buff_in(read),
-        .w_buff_out(write),
-        .sig_in(sig_rx),
-        .sig_out(sig_tx),
-        .data_from_uart(data_out),
-        .data_from_system(data_in),
-        .full_in(full_in),
-        .empty_in(empty_in),
-        .full_out(full_out),
-        .empty_out(empty_out)
-    );
+top_test #(32, 8, 64, 200_000_000, 115200) top_test_inst(
+    .clock(clock),
+    .reset(reset),
+    .sig_in(sig_rx),
+    .sig_out(sig_tx)
+);
 
 endmodule

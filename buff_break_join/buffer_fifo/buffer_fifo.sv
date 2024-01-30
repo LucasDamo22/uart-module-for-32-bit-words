@@ -29,10 +29,9 @@ always@(posedge clock or posedge reset) begin
     if(reset)begin
         w_addr <= 0;
         r_addr <= 0;
-        //data_out_int <=0;
     end else begin
         data_out_int <= MEM [r_addr];
-        //empty <= empty_int;
+        
 
         if(w_enable && ~full_int)begin 
 
@@ -54,17 +53,6 @@ always@(posedge clock or posedge reset) begin
         
     end
 end
-
-// always@(*)begin 
-//     if(reset) begin
-//         full_int <= 0;
-//     end
-//     else if(r_addr == (w_addr + 1)) begin 
-//         full_int <= 1;
-//     end else begin
-//         full_int <= 0;
-//     end
-// end
 
 assign full_int = r_addr == (w_addr + 1'b1) ? 1'b1 : 1'b0;
 

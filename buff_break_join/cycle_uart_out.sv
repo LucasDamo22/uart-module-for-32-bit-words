@@ -26,6 +26,7 @@ wire [1:0] credit;
 reg buff_empty_reg;
 reg delayer_1, delayer_2;
 
+assign empty = delayer_2;
 assign sig = tx.sig;
 assign tx.data = word_o;
 assign tx.valid = ~delayer_1; //? 'b1 : 'b0;
