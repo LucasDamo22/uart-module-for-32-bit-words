@@ -46,7 +46,7 @@ always@(posedge clock or posedge reset) begin
     end else begin
         case(EA)
             IDLE: begin
-                if(empty_in == 1'b0) begin
+                if(empty_in == 1'b1) begin
                     EA <= RECEIVING;
                 end else if(full_out == 1'b1) begin
                     EA <= SENDING;

@@ -9,7 +9,7 @@ module tb;
     logic read;
     localparam sig_detecttime = 8680;
     reg [63:0] timer;
-    reg [7:0]serial_data[10:0];
+    reg [7:0]serial_data[7:0];
     initial
     begin
         reset = 1'b1;
@@ -22,17 +22,17 @@ logic [3:0] cont;
         read = 0;
         timer = 64'd10000000;
         clock = 1'b1;
-        serial_data[0] = 'd104;
-        serial_data[1] = 'd101;
-        serial_data[2] = 'd108;
-        serial_data[3] = 'd108;
-        serial_data[4] = 'd111;
-        serial_data[5] = 'd009;
-        serial_data[6] = 'd119;
-        serial_data[7] = 'd111; 
-        serial_data[8] = 'd114; 
-        serial_data[9] = 'd108; 
-        serial_data[10] = 'd100;  
+        serial_data[0] = 'h03;
+        serial_data[1] = 'h04;
+         serial_data[2] = 'hAA;
+         serial_data[3] = 'hFF;
+          serial_data[4] = 'hBB;
+          serial_data[5] = 'hCC;
+          serial_data[6] = 'hDD;
+          serial_data[7] = 'hEE; 
+        // serial_data[8] = 'd114; 
+        // serial_data[9] = 'd108; 
+        // serial_data[10] = 'd100;  
         sig_rts_rx = 'b1;
         cont = 0;
         
@@ -40,7 +40,7 @@ logic [3:0] cont;
 
     always #(CLOCK_PERIOD/2.0) clock = ~clock;
 
-
+reg [7:0] ctrl;
 assign sig_rx = sig_rts_rx;
 //assign sig_rx = ;
 always begin
@@ -48,8 +48,10 @@ always begin
     read = ~read;
 end
 always begin
-    #30
+    ctrl <= serial_data[cont];
+    #(timer/10);
     sig_rts_rx = 'b1;
+    //#(timer/4)
     #(sig_detecttime* 5)
     //start bit
     #(sig_detecttime)
@@ -58,18 +60,42 @@ always begin
     #(sig_detecttime) sig_rts_rx = serial_data[cont][0];
     #(sig_detecttime) sig_rts_rx = serial_data[cont][1];
     #(sig_detecttime) sig_rts_rx = serial_data[cont][2];
-    #(sig_detecttime) sig_rts_rx = serial_data[cont][3];                  
+    #(sig_detecttime) sig_rts_rx = serial_data[cont][3];                 
     #(sig_detecttime) sig_rts_rx = serial_data[cont][4];
     #(sig_detecttime) sig_rts_rx = serial_data[cont][5];
     #(sig_detecttime) sig_rts_rx = serial_data[cont][6];
     #(sig_detecttime) sig_rts_rx = serial_data[cont][7];
-    #(sig_detecttime)
+    #(sig_detecttime) sig_rts_rx = 'b1;
+    //  sig_rts_rx = 'b1;
+    // #(sig_detecttime)
     cont = cont + 'b1;
     
-    if(cont == 'd11) begin
+    if(cont == 'd7) begin
         cont = 0;
+        #(timer/10);
     end
 end
+// integer cycles_per_bit = 1900; // Clock cycles per bit for 200MHz clock and 115200 baud rate
+
+// always begin
+//     sig_rts_rx = 'b1;
+//     #(cycles_per_bit*50) // Wait for 5 bit times
+//     sig_rts_rx = 'b0; // Start bit
+//     // Transmit each bit, waiting for one bit time in between
+//     for (integer i = 0; i < 8; i =  i + 1) begin
+//         #(cycles_per_bit)
+//         sig_rts_rx = serial_data[cont][i];
+//     end
+//     #(cycles_per_bit)
+//     sig_rts_rx = 'b1; // Stop bit
+//     #(cycles_per_bit)
+//     cont = cont + 'b1;
+    
+//     if(cont == 'd4) begin
+//         cont = 0;
+//         #(cycles_per_bit*100);
+//     end
+// end
 
 logic [31:0] data_out;
 logic [31:0] data_in;
@@ -91,7 +117,7 @@ always@(posedge clock or reset) begin
             write = 1'b0;
         end
 end
-top_test #(32, 8, 64, 200_000_000, 115200) top_test_inst(
+top_test #(32, 8, 4, 200_000_000, 115200) top_test_inst(
     .clock(clock),
     .reset(reset),
     .sig_in(sig_rx),

@@ -9,6 +9,7 @@ module wrap(
 );
 
 IBUFDS CLK_IBUFDS (.I(clock_p), .IB(clock_n), .O(clock));
-top top (.clock(clock), .reset(reset),.sig_rx(sig_rx), .sig_tx(sig_tx), .states_led(states_led));
-
+top_test #(32, 8, 2048, 200_000_000, 115200) top (.clock(clock), .reset(reset),.sig_in(sig_rx), .sig_out(sig_tx));
+assign states_led = 2'b11 ? (reset) :
+                    2'b00;
 endmodule
