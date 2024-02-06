@@ -18,24 +18,21 @@ module buffer_fifo#(parameter
 reg [(($clog2(MEM_SIZE))-1):0]w_addr, r_addr;
 wire full_int;
 reg empty_int;
-reg [(WORD_SIZE-1):0] MEM [0:(MEM_SIZE-1)];
-reg [(WORD_SIZE-1):0] data_out_int;
 
-assign data_out = data_out_int;
+
+
+wire [(WORD_SIZE-1):0] data_out_int;
 assign full = full_int;
 assign empty = empty_int;
+assign data_out = data_out_int;
 
 always@(posedge clock or posedge reset) begin 
     if(reset)begin
         w_addr <= 0;
         r_addr <= 0;
     end else begin
-        data_out_int <= MEM [r_addr];
         
-
         if(w_enable && ~full_int)begin 
-
-            MEM[w_addr]<= data_in;
             if(w_addr == (MEM_SIZE -1)) begin
                 w_addr <= 0;
             end else begin 
@@ -43,7 +40,6 @@ always@(posedge clock or posedge reset) begin
             end
         end
         if(r_enable && ~empty_int)begin 
-            
             if(r_addr == (MEM_SIZE -1)) begin
                 r_addr <= 0;
             end else begin 
@@ -66,6 +62,12 @@ always@(*)begin
         empty_int <= 0;
     end
 end
+
+
+ram#(MEM_SIZE, WORD_SIZE) ram_inst (.clock(clock),          .reset(reset), 
+                                    .w_enable(w_enable),     
+                                    .w_addr(w_addr),        .r_addr(r_addr), 
+                                    .data_in(data_in),      .data_out(data_out_int));
 
 
 endmodule;
